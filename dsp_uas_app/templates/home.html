@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Data Scientist Job Change Prediction</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-50 min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="text-white p-6 shadow-lg" style="background: linear-gradient(to right, #115697, #1a73b8);">
+    <div class="container mx-auto">
+        <h1 class="text-3xl font-bold">Data Scientist Job Change Prediction</h1>
+        <p class="mt-2 text-blue-100">Prediksi Kandidat yang Ingin Bergabung dengan Perusahaan Anda</p>  
+    </div>
+    <div class="container mx-auto">
+        <nav class="mt-4 flex gap-6">
+          <a href="/" class="text-white hover:text-blue-200 transition-colors font-medium">Beranda</a>
+          <a href="/dashboard" class="text-white hover:text-blue-200 transition-colors font-medium">Dashboard Analitik</a>
+          <a href="{{ url_for('predict_view') }}" class="text-white hover:text-blue-200 transition-colors font-medium">Predict</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-grow container mx-auto px-4 py-12">
+    <!-- Hero Section -->
+    <section class="mb-12 text-center">
+      <h2 class="text-4xl font-bold mb-4" style="color: #115697;">Rekrut Data Scientist Terbaik untuk Perusahaan Anda</h2>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+        Prediksi kandidat mana yang benar-benar ingin bekerja di perusahaan Anda setelah menyelesaikan pelatihan, 
+        dan optimalkan investasi pelatihan Anda dengan keputusan berbasis data.
+      </p>
+    </section>
+
+    <!-- Problem Statement -->
+    <section class="mb-12 bg-white rounded-xl shadow-lg p-8 border-l-4" style="border-color: #115697;">
+      <h3 class="text-2xl font-bold mb-4" style="color: #115697;">
+        Tantangan Perusahaan
+      </h3>
+      <div class="text-gray-700 space-y-4">
+        <p class="leading-relaxed">
+          <strong>Perusahaan Big Data dan Data Science</strong> yang aktif menyelenggarakan kursus pelatihan menghadapi tantangan:
+        </p>
+        <ul class="list-disc space-y-3 ml-6 text-gray-700">
+          <li>
+            Banyak kandidat yang mendaftar pelatihan hanya untuk mencari pekerjaan di tempat lain
+          </li>
+          <li>
+            Biaya dan waktu terbuang untuk melatih kandidat yang tidak serius bergabung
+          </li>
+          <li>
+            Sulit merencanakan kursus dan mengategorisasi kandidat dengan efektif
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Solution -->
+    <section class="mb-12 bg-white rounded-xl shadow-lg p-8 border-l-4 border-green-500">
+      <h3 class="text-2xl font-bold text-green-700 mb-4">
+        Solusi Kami
+      </h3>
+      <div class="text-gray-700 space-y-4">
+        <p class="leading-relaxed">
+          Aplikasi <strong>Machine Learning</strong> ini membantu perusahaan untuk:
+        </p>
+        <div class="grid md:grid-cols-2 gap-4 mt-6">
+          <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
+            <h4 class="font-bold text-green-800 mb-2">Prediksi Akurat</h4>
+            <p class="text-sm text-gray-600">Memprediksi probabilitas kandidat akan bergabung atau mencari pekerjaan lain</p>
+          </div>
+          <div class="bg-blue-50 p-4 rounded-lg border-l-4" style="border-color: #115697;">
+            <h4 class="font-bold" style="color: #115697;">Analisis Faktor</h4>
+            <p class="text-sm text-gray-600">Mengidentifikasi faktor-faktor yang memengaruhi keputusan kandidat</p>
+          </div>
+          <div class="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-500">
+            <h4 class="font-bold text-purple-800 mb-2">Hemat Waktu & Biaya</h4>
+            <p class="text-sm text-gray-600">Fokus pada kandidat yang benar-benar berkomitmen bergabung</p>
+          </div>
+          <div class="bg-orange-50 p-4 rounded-lg border-l-4 border-orange-500">
+            <h4 class="font-bold text-orange-800 mb-2">Optimasi Pelatihan</h4>
+            <p class="text-sm text-gray-600">Perencanaan kursus lebih baik dengan kategorisasi kandidat yang tepat</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="mb-12">
+      <h3 class="text-2xl font-bold text-center mb-8" style="color: #115697;">Data yang Dianalisis</h3>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-shadow duration-300 border-t-4" style="border-color: #115697;">
+          <h4 class="font-bold text-lg mb-2" style="color: #115697;">Data Demografi</h4>
+          <p class="text-gray-600 text-sm">Kota, gender, dan indeks pengembangan wilayah</p>
+        </div>
+        <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-shadow duration-300 border-t-4" style="border-color: #115697;">
+          <h4 class="font-bold text-lg mb-2" style="color: #115697;">Data Pendidikan</h4>
+          <p class="text-gray-600 text-sm">Tingkat pendidikan, jurusan, dan status kuliah</p>
+        </div>
+        <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-shadow duration-300 border-t-4" style="border-color: #115697;">
+          <h4 class="font-bold text-lg mb-2" style="color: #115697;">Data Pengalaman</h4>
+          <p class="text-gray-600 text-sm">Pengalaman kerja, ukuran perusahaan, dan jam pelatihan</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="mb-12 text-center">
+      <div class="bg-white rounded-xl shadow-lg p-10 border-t-4" style="border-color: #115697;">
+        <h3 class="text-3xl font-bold mb-4" style="color: #115697;">Siap Memprediksi Kandidat Terbaik?</h3>
+        <p class="text-gray-600 mb-6 text-lg">
+          Mulai gunakan aplikasi untuk mengidentifikasi kandidat yang benar-benar ingin bergabung dengan perusahaan Anda
+        </p>
+        <div class="flex gap-4 justify-center flex-wrap">
+          <a href="{{ url_for('predict_view') }}" 
+             class="inline-block text-white px-8 py-4 rounded-lg font-bold text-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+             style="background: linear-gradient(to right, #115697, #1a73b8);">
+            Mulai Prediksi
+          </a>
+          <a href="/dashboard" 
+             class="inline-block bg-gray-100 hover:bg-gray-200 text-gray-800 px-8 py-4 rounded-lg font-bold text-lg border-2 border-gray-300 transform hover:scale-105 transition-all duration-200">
+            Lihat Dashboard
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Info Box -->
+    <section class="max-w-4xl mx-auto">
+      <div class="bg-blue-50 border-l-4 p-6 rounded-lg" style="border-color: #115697;">
+        <div>
+            <h4 class="font-bold text-lg mb-2" style="color: #115697;">Tentang Dataset</h4>
+            <p class="text-gray-700 text-sm leading-relaxed">
+              Dataset ini dirancang untuk memahami faktor-faktor yang menyebabkan seseorang ingin berpindah pekerjaan. 
+              Dengan menggunakan model machine learning yang memanfaatkan kredensial, data demografi, dan pengalaman kerja, 
+              aplikasi ini membantu perusahaan dalam riset HR dan optimasi proses rekrutmen.
+            </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white text-center text-gray-600 py-6 shadow-inner mt-8">
+    <p class="font-medium">&copy; 2025 Data Scientist Job Change Prediction App</p>
+    <p class="text-sm text-gray-500 mt-1">Powered by Machine Learning & Data Science</p>
+  </footer>
+
+</body>
+</html>

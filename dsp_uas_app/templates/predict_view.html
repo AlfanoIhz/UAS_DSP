@@ -1,0 +1,407 @@
+{% extends "base.html" %}
+
+{% block title %}Job Change Prediction{% endblock %}
+
+{% block content %}
+<!-- Tambahkan Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 py-8">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Form Section -->
+            <div class="lg:w-2/3">
+                <div class="bg-white rounded-xl shadow-lg border border-gray-200">
+                    <div class="text-white rounded-t-xl p-6" style="background: linear-gradient(to right, #115697, #1a73b8);">
+                        <h2 class="text-2xl font-bold mb-2"> Job Change Prediction</h2>
+                        <p class="text-blue-100">Masukkan data kandidat untuk memprediksi kemungkinan pindah kerja</p>
+                    </div>
+                    <div class="p-6">
+                        {% if error %}
+                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                                </svg>
+                                {{ error }}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <form method="POST" action="{{ url_for('predict_view') }}" class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Left Column -->
+                                <div class="space-y-4">
+                                    <div class="form-group">
+                                        <label for="city" class="block text-sm font-semibold text-gray-700 mb-2">
+                                            City ID (e.g., 5, 64, 77)
+                                        </label>
+                                        <input type="number"
+                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 transition-all duration-200" 
+                                               style="outline: none;" 
+                                               id="city" name="city"
+                                               onfocus="this.style.borderColor='#115697'; this.style.boxShadow='0 0 0 3px rgba(17, 86, 151, 0.1)'"
+                                               onblur="this.style.borderColor=''; this.style.boxShadow=''" 
+                                               value="{{ features.city if features else '' }}" 
+                                               required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="city_development_index" class="block text-sm font-semibold text-gray-700 mb-2">
+                                            City Development Index (0.0 - 1.0)
+                                        </label>
+                                        <input type="number" 
+                                               step="0.001"
+                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 transition-all duration-200" 
+                                               style="outline: none;" 
+                                               id="city_development_index" name="city_development_index"
+                                               onfocus="this.style.borderColor='#115697'; this.style.boxShadow='0 0 0 3px rgba(17, 86, 151, 0.1)'"
+                                               onblur="this.style.borderColor=''; this.style.boxShadow=''" 
+                                               value="{{ features.city_development_index if features else '' }}" 
+                                               min="0" max="1" 
+                                               step="0.001"
+                                               placeholder="Contoh: 0.920"
+                                               required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="gender" class="block text-sm font-semibold text-gray-700 mb-2">
+                                            Gender
+                                        </label>
+                                        <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 transition-all duration-200" 
+                                                style="outline: none;" 
+                                                id="gender" name="gender" required
+                                                onfocus="this.style.borderColor='#115697'; this.style.boxShadow='0 0 0 3px rgba(17, 86, 151, 0.1)'"
+                                                onblur="this.style.borderColor=''; this.style.boxShadow=''">
+                                            <option value="">Select Gender</option>
+                                            <option value="0" {{ 'selected' if features and features.gender == 0 else '' }}>Female</option>
+                                            <option value="1" {{ 'selected' if features and features.gender == 1 else '' }}>Male</option>
+                                            <option value="3" {{ 'selected' if features and features.gender == 2 else '' }}>Other</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="relevent_experience" class="block text-sm font-semibold text-gray-700 mb-2">
+                                            Relevant Experience
+                                        </label>
+                                        <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 transition-all duration-200" 
+                                                style="outline: none;" 
+                                                id="relevent_experience" name="relevent_experience" required
+                                                onfocus="this.style.borderColor='#115697'; this.style.boxShadow='0 0 0 3px rgba(17, 86, 151, 0.1)'"
+                                                onblur="this.style.borderColor=''; this.style.boxShadow=''">
+                                            <option value="0" {{ 'selected' if features and features.relevent_experience == 0 else '' }}>No</option>
+                                            <option value="1" {{ 'selected' if features and features.relevent_experience == 1 else '' }}>Yes</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="enrolled_university" class="block text-sm font-semibold text-gray-700 mb-2">
+                                            Enrolled University
+                                        </label>
+                                        <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 transition-all duration-200" 
+                                                style="outline: none;" 
+                                                id="enrolled_university" name="enrolled_university" required
+                                                onfocus="this.style.borderColor='#115697'; this.style.boxShadow='0 0 0 3px rgba(17, 86, 151, 0.1)'"
+                                                onblur="this.style.borderColor=''; this.style.boxShadow=''">
+                                            <option value="">Select Status</option>
+                                            <option value="0" {{ 'selected' if features and features.enrolled_university == 0 else '' }}>No Enrollment</option>
+                                            <option value="1" {{ 'selected' if features and features.enrolled_university == 1 else '' }}>Full Time</option>
+                                            <option value="2" {{ 'selected' if features and features.enrolled_university == 2 else '' }}>Part Time</option>
+                                            <option value="3" {{ 'selected' if features and features.enrolled_university == 3 else '' }}>Other</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="education_level" class="block text-sm font-semibold text-gray-700 mb-2">
+                                            Education Level
+                                        </label>
+                                        <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 transition-all duration-200" 
+                                                style="outline: none;" 
+                                                id="education_level" name="education_level" required
+                                                onfocus="this.style.borderColor='#115697'; this.style.boxShadow='0 0 0 3px rgba(17, 86, 151, 0.1)'"
+                                                onblur="this.style.borderColor=''; this.style.boxShadow=''">
+                                                <option value="">Select Education</option>
+                                                <option value="0" {{ 'selected' if features and features.education_level == 0 else '' }}>Primary School</option>
+                                                <option value="1" {{ 'selected' if features and features.education_level == 1 else '' }}>High School</option>
+                                                <option value="2" {{ 'selected' if features and features.education_level == 2 else '' }}>Graduate</option>
+                                                <option value="3" {{ 'selected' if features and features.education_level == 3 else '' }}>Masters</option>
+                                                <option value="4" {{ 'selected' if features and features.education_level == 4 else '' }}>Phd</option>
+                                                <option value="5" {{ 'selected' if features and features.education_level == 5 else '' }}>Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <!-- Right Column -->
+                                <div class="space-y-4">
+                                    <div class="form-group">
+                                        <label for="major_discipline" class="block text-sm font-semibold text-gray-700 mb-2">
+                                            Major Discipline
+                                        </label>
+                                        <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 transition-all duration-200" 
+                                                style="outline: none;" 
+                                                id="major_discipline" name="major_discipline" required
+                                                onfocus="this.style.borderColor='#115697'; this.style.boxShadow='0 0 0 3px rgba(17, 86, 151, 0.1)'"
+                                                onblur="this.style.borderColor=''; this.style.boxShadow=''">
+                                            <option value="">Select Major</option>
+                                            <option value="0" {{ 'selected' if features and features.major_discipline == 0 else '' }}>Arts</option>
+                                            <option value="1" {{ 'selected' if features and features.major_discipline == 1 else '' }}>Business Degree</option>
+                                            <option value="2" {{ 'selected' if features and features.major_discipline == 2 else '' }}>Humanities</option>
+                                            <option value="3" {{ 'selected' if features and features.major_discipline == 3 else '' }}>No Major</option>
+                                            <option value="5" {{ 'selected' if features and features.major_discipline == 5 else '' }}>STEM</option>
+                                            <option value="4" {{ 'selected' if features and features.major_discipline == 4 else '' }}>Other</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="experience" class="block text-sm font-semibold text-gray-700 mb-2">
+                                            Experience (Years)
+                                        </label>
+                                        <input type="number" 
+                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 transition-all duration-200" 
+                                               style="outline: none;" 
+                                               id="experience" name="experience"
+                                               onfocus="this.style.borderColor='#115697'; this.style.boxShadow='0 0 0 3px rgba(17, 86, 151, 0.1)'"
+                                               onblur="this.style.borderColor=''; this.style.boxShadow=''" 
+                                               value="{{ features.experience if features else '' }}" 
+                                               min="0" 
+                                               placeholder="e.g. 5"
+                                               required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="company_size" class="block text-sm font-semibold text-gray-700 mb-2">
+                                            Company Size
+                                        </label>
+                                        <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 transition-all duration-200" 
+                                                style="outline: none;" 
+                                                id="company_size" name="company_size" required
+                                                onfocus="this.style.borderColor='#115697'; this.style.boxShadow='0 0 0 3px rgba(17, 86, 151, 0.1)'"
+                                                onblur="this.style.borderColor=''; this.style.boxShadow=''">
+                                            <option value="">Select Size</option>
+                                            <option value="0" {{ 'selected' if features and features.company_size == 0 else '' }}>&lt;10</option>
+                                            <option value="1" {{ 'selected' if features and features.company_size == 1 else '' }}>10-49</option>
+                                            <option value="2" {{ 'selected' if features and features.company_size == 2 else '' }}>50-99</option>
+                                            <option value="3" {{ 'selected' if features and features.company_size == 3 else '' }}>100-500</option>
+                                            <option value="4" {{ 'selected' if features and features.company_size == 4 else '' }}>500-999</option>
+                                            <option value="5" {{ 'selected' if features and features.company_size == 5 else '' }}>1000-4999</option>
+                                            <option value="6" {{ 'selected' if features and features.company_size == 6 else '' }}>5000-9999</option>
+                                            <option value="7" {{ 'selected' if features and features.company_size == 7 else '' }}>10000+</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="company_type" class="block text-sm font-semibold text-gray-700 mb-2">
+                                            Company Type
+                                        </label>
+                                        <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 transition-all duration-200" 
+                                                style="outline: none;" 
+                                                id="company_type" name="company_type" required
+                                                onfocus="this.style.borderColor='#115697'; this.style.boxShadow='0 0 0 3px rgba(17, 86, 151, 0.1)'"
+                                                onblur="this.style.borderColor=''; this.style.boxShadow=''">
+                                                <option value="">Select Type</option>
+                                                <option value="0" {{ 'selected' if features and features.company_type == 0 else '' }}>Early Stage Startup</option>
+                                                <option value="1" {{ 'selected' if features and features.company_type == 1 else '' }}>Funded Startup</option>
+                                                <option value="2" {{ 'selected' if features and features.company_type == 2 else '' }}>NGO</option>
+                                                <option value="4" {{ 'selected' if features and features.company_type == 4 else '' }}>Public Sector</option>
+                                                <option value="5" {{ 'selected' if features and features.company_type == 5 else '' }}>Pvt Ltd</option>
+                                                <option value="3" {{ 'selected' if features and features.company_type == 3 else '' }}>Other</option>
+                                                <option value="6" {{ 'selected' if features and features.company_type == 6 else '' }}>Unknown</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="last_new_job" class="block text-sm font-semibold text-gray-700 mb-2">
+                                            Last New Job (Years)
+                                        </label>
+                                        <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 transition-all duration-200" 
+                                                style="outline: none;" 
+                                                id="last_new_job" name="last_new_job" required
+                                                onfocus="this.style.borderColor='#115697'; this.style.boxShadow='0 0 0 3px rgba(17, 86, 151, 0.1)'"
+                                                onblur="this.style.borderColor=''; this.style.boxShadow=''">
+                                            <option value="">Select Duration</option>
+                                            <option value="0" {{ 'selected' if features and features.last_new_job == 0 else '' }}>Never</option>
+                                            <option value="1" {{ 'selected' if features and features.last_new_job == 1 else '' }}>1 Year</option>
+                                            <option value="2" {{ 'selected' if features and features.last_new_job == 2 else '' }}>2 Years</option>
+                                            <option value="3" {{ 'selected' if features and features.last_new_job == 3 else '' }}>3 Years</option>
+                                            <option value="4" {{ 'selected' if features and features.last_new_job == 4 else '' }}>4 Years</option>
+                                            <option value="5" {{ 'selected' if features and features.last_new_job == 5 else '' }}>&gt;4 Years</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="training_hours" class="block text-sm font-semibold text-gray-700 mb-2">
+                                            Training Hours
+                                        </label>
+                                        <input type="number" 
+                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 transition-all duration-200" 
+                                               style="outline: none;" 
+                                               id="training_hours" name="training_hours"
+                                               onfocus="this.style.borderColor='#115697'; this.style.boxShadow='0 0 0 3px rgba(17, 86, 151, 0.1)'"
+                                               onblur="this.style.borderColor=''; this.style.boxShadow=''" 
+                                               value="{{ features.training_hours if features else '' }}" 
+                                               min="0" 
+                                               placeholder="e.g. 36"
+                                               required>
+                                    </div>
+                                </div>
+                    </div>
+                            
+                            <div class="mt-8 space-y-4">
+                                <button type="submit" 
+                                        class="w-full text-white py-4 px-6 rounded-lg font-semibold text-lg transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
+                                        style="background: linear-gradient(to right, #115697, #1a73b8);"
+                                        onmouseover="this.style.background='linear-gradient(to right, #0d4170, #155a8a)'"
+                                        onmouseout="this.style.background='linear-gradient(to right, #115697, #1a73b8)'">
+                                    Predict Job Change
+                                </button>
+                                
+                                <a href="{{ url_for('predict_view') }}" 
+                                   class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 px-6 rounded-lg font-semibold text-center block transition-all duration-200 border border-gray-300">
+                                    Generate Random Data
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Results Section -->
+            <div class="lg:w-1/3 space-y-6">
+                {% if prediction %}
+                <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+                    <div class="text-white p-4" style="background: linear-gradient(to right, #115697, #1a73b8);">
+                        <h3 class="text-xl font-bold">Prediction Result</h3>
+                    </div>
+                    <div class="p-6 text-center">
+                        {% if prediction == 'Yes' %}
+                        <div class="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg mb-4">
+                            <div class="text-6xl mb-4">✅</div>
+                            <h3 class="text-2xl font-bold text-green-800 mb-2">Good Candidate</h3>
+                            <p class="text-green-600 font-medium">Candidate will likely change job - Looking for new opportunities</p>
+                        </div>
+                        {% elif prediction == 'No' %}
+                        <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg mb-4">
+                            <div class="text-6xl mb-4">❌</div>
+                            <h3 class="text-2xl font-bold text-red-800 mb-2">Bad Candidate</h3>
+                            <p class="text-red-600 font-medium">Candidate will likely stay - Not looking for job change</p>
+                        </div>
+                        {% else %}
+                        <div class="bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-lg mb-4">
+                            <div class="text-6xl mb-4">⚠️</div>
+                            <h3 class="text-2xl font-bold text-yellow-800">{{ prediction }}</h3>
+                        </div>
+                        {% endif %}
+                        
+                        {% if probability %}
+                        <div class="mt-6">
+                            <h4 class="text-lg font-semibold text-gray-700 mb-4">Confidence Levels:</h4>
+                            
+                            <!-- Will Change Probability (Good) -->
+                            <div class="mb-4">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-sm font-medium text-green-700">Will Change</span>
+                                    <span class="text-sm font-bold text-green-700">{{ probability.Yes }}%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-3">
+                                    <div class="bg-gradient-to-r from-green-400 to-green-600 h-3 rounded-full transition-all duration-500" 
+                                         style="width: {{ probability.Yes }}%"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Won't Change Probability (Bad) -->
+                            <div class="mb-4">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-sm font-medium text-red-700">Won't Change</span>
+                                    <span class="text-sm font-bold text-red-700">{{ probability.No }}%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-3">
+                                    <div class="bg-gradient-to-r from-red-400 to-red-600 h-3 rounded-full transition-all duration-500" 
+                                         style="width: {{ probability.No }}%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Instructions Card -->
+                <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+                    <div class="text-white p-5" style="background: linear-gradient(135deg, #115697 0%, #1a73b8 100%);">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-2xl">📋</span>
+                            <h4 class="text-lg font-bold">How to Use</h4>
+                        </div>
+                        <p class="text-sm text-blue-100 mt-1">Follow these simple steps</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-3">
+                            <div class="flex items-start space-x-3 p-4 rounded-lg transition-all duration-200 hover:shadow-md" style="background: linear-gradient(to right, rgba(17, 86, 151, 0.05), rgba(26, 115, 184, 0.05)); border-left: 3px solid #115697;">
+                                <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold" style="background: #115697;">1</div>
+                                <div>
+                                    <p class="text-gray-800 font-semibold text-sm">Fill Required Fields</p>
+                                    <p class="text-gray-600 text-xs mt-1">Enter all candidate information</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3 p-4 rounded-lg transition-all duration-200 hover:shadow-md" style="background: linear-gradient(to right, rgba(17, 86, 151, 0.05), rgba(26, 115, 184, 0.05)); border-left: 3px solid #1a73b8;">
+                                <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold" style="background: #1a73b8;">2</div>
+                                <div>
+                                    <p class="text-gray-800 font-semibold text-sm">Generate Sample Data</p>
+                                    <p class="text-gray-600 text-xs mt-1">Or use random data for testing</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3 p-4 rounded-lg transition-all duration-200 hover:shadow-md" style="background: linear-gradient(to right, rgba(17, 86, 151, 0.05), rgba(26, 115, 184, 0.05)); border-left: 3px solid #115697;">
+                                <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold" style="background: #115697;">3</div>
+                                <div>
+                                    <p class="text-gray-800 font-semibold text-sm">Get Prediction</p>
+                                    <p class="text-gray-600 text-xs mt-1">View results and confidence scores</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 p-4 rounded-lg border-2 border-dashed" style="border-color: #115697; background: rgba(17, 86, 151, 0.03);">
+                            <div class="flex items-center space-x-2 mb-3">
+                                <span class="text-xl">💡</span>
+                                <h5 class="font-bold text-sm" style="color: #115697;">Key Factors</h5>
+                            </div>
+                            <ul class="text-xs text-gray-700 space-y-2">
+                                <li class="flex items-start">
+                                    <span class="mr-2" style="color: #115697;">▸</span>
+                                    <span>Relevant experience increases job change likelihood</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="mr-2" style="color: #115697;">▸</span>
+                                    <span>City development index affects opportunities</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="mr-2" style="color: #115697;">▸</span>
+                                    <span>Education level and major discipline matter</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="mr-2" style="color: #115697;">▸</span>
+                                    <span>Training hours show company investment</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Update Model Section -->
+                        <div class="mt-6 p-4 rounded-lg border-2" style="border-color: #115697; background: linear-gradient(135deg, rgba(17, 86, 151, 0.05), rgba(26, 115, 184, 0.05));">
+                            <h5 class="font-bold text-sm mb-3" style="color: #115697;">Model Management</h5>
+                            <p class="text-xs text-gray-600 mb-3">
+                                Update model dengan versi terbaru dari MLflow untuk mendapatkan prediksi yang lebih akurat.
+                            </p>
+                            <a href="/model" 
+                               class="inline-block w-full text-center text-white px-4 py-2 rounded-lg font-semibold text-sm hover:shadow-lg transition-all duration-200"
+                               style="background: linear-gradient(to right, #115697, #1a73b8);"
+                               onmouseover="this.style.background='linear-gradient(to right, #0d4170, #155a8a)'"
+                               onmouseout="this.style.background='linear-gradient(to right, #115697, #1a73b8)'">
+                                Update Model
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

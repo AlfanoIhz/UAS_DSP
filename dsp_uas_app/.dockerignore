@@ -1,0 +1,26 @@
+# Virtual environment
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Notebook & Data (Hapus jika tidak ingin bengkak)
+*.ipynb
+*.csv
+*.zip
+
+# Git & IDE
+.git/
+.gitignore
+.vscode/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# OS Files
+.DS_Store
+Thumbs.db

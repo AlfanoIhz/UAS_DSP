@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Solid Web App{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+      <!-- Header -->
+        <header class="text-white p-6 shadow-lg" style="background: linear-gradient(to right, #115697, #1a73b8);">
+            <div class="container mx-auto">
+                <h1 class="text-3xl font-bold">Data Scientist Job Change Prediction</h1>
+                <p class="mt-2 text-blue-100">Prediksi Kandidat yang Ingin Bergabung dengan Perusahaan Anda</p>  
+            </div>
+            <div class="container mx-auto">
+                <nav class="mt-4 flex gap-6">
+                <a href="/" class="text-white hover:text-blue-200 transition-colors font-medium">Beranda</a>
+                <a href="/dashboard" class="text-white hover:text-blue-200 transition-colors font-medium">Dashboard Analitik</a>
+                <a href="{{ url_for('predict_view') }}" class="text-white hover:text-blue-200 transition-colors font-medium">Predict</a>
+            </nav>
+            </div>
+        </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>
